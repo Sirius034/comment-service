@@ -1,5 +1,5 @@
 use database::models::NewComment;
-use database::{create, read};
+use database::{create, delete, read};
 
 fn main() {
     let new_comment = NewComment {
@@ -13,16 +13,19 @@ fn main() {
 
     let created_comment = create::create_comment(&new_comment).expect("Comment creation failed");
 
-    println!("Created: {created_comment:#?}");
+    println!("*** Created: {:#?}", created_comment.id);
 
-    let comments = read::get_comments().expect("Could not get comments");
+    let data_comment = read::get_comment(&created_comment.id.to_string())
+        .expect("Comment reading failed");
 
-    println!("Сomments: {comments:#?}");
+    println!("*** Full created data comment: {data_comment:#?}");
 
-    if let Some(comment) = comments.first() {
-        let data_comment = read::get_comment(&comment.id.to_string())
-            .unwrap_or_else(|error| panic!("Error: {error}"));
+    let comments = read::get_comments(None).expect("Could not get comments");
 
-        println!("Full data comment: {data_comment:#?}");
+    println!("*** Сomments: {comments:#?}");
+
+    match delete::delete_comment(&data_comment.id.to_string()) {
+        Ok(remove_comment_id) => println!("*** Comment {remove_comment_id} deleted"),
+        Err(error) => panic!("Error: {error}"),
     }
 }

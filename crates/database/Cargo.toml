@@ -7,4 +7,6 @@ edition = "2024"
 chrono = "0.4.43"
 diesel = { version = "2.3.6", features = ["postgres", "uuid", "chrono"] }
 dotenvy = "0.15.7"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
 uuid = "1.20.0"

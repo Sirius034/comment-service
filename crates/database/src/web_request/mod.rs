@@ -2,4 +2,4 @@ pub mod request;
 pub mod comments;
 
 pub use request::WebRequest;
-pub use comments::Comments;
+pub use comments::{Comments, ErrorRequest};

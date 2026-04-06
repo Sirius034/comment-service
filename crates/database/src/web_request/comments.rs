@@ -1,4 +1,4 @@
-use super::request::{Filter, Operator, WebRequest};
+use super::request::{Filter, Operator, Sort, WebRequest};
 use crate::models::Comment;
 use crate::schema::comments;
 use diesel::pg::{Pg, PgConnection};
@@ -14,6 +14,16 @@ macro_rules! apply_filter {
         match $operator {
             Operator::_Eq => $query.filter($col.eq($value)),
             Operator::_Neq => $query.filter($col.ne($value)),
+        }
+    };
+}
+
+macro_rules! apply_sort {
+    ($query:expr, $col:ident, $is_sort_desc:expr) => {
+        if $is_sort_desc {
+            $query.order_by($col.desc())
+        } else {
+            $query.order_by($col.asc())
         }
     };
 }
@@ -58,6 +68,7 @@ impl Error for ErrorRequest {
 #[derive(Deserialize, Debug)]
 struct RequestParams {
     filter: Option<Filter>,
+    sort: Option<Sort>,
 }
 
 pub struct Comments {
@@ -119,17 +130,38 @@ impl WebRequest for Comments {
         Ok(self)
     }
 
-    fn sort(self) -> Result<Self, Self::Error> {
+    fn sort(mut self, sort_list: Sort) -> Result<Self, Self::Error> {
+        use crate::schema::comments::dsl::*;
+
+        for sort in sort_list {
+            let is_sord_desc = sort.starts_with("-");
+            let col_name = if is_sord_desc {
+                sort.get(1..)
+            } else {
+                sort.get(0..)
+            };
+
+            self.box_query = match col_name {
+                Some("data_created") => apply_sort!(self.box_query, data_created, is_sord_desc),
+                Some("pinned") => apply_sort!(self.box_query, data_created, is_sord_desc),
+                _ => self.box_query,
+            };
+        }
+
         Ok(self)
     }
 
-    fn init_sql_query_from_json(self, json: Option<&str>) -> Result<Self, Self::Error> {
+    fn init_sql_query_from_json(mut self, json: Option<&str>) -> Result<Self, Self::Error> {
         if let Some(json) = json {
-            let request_params = from_str::<RequestParams>(json)
-                .map_err(ErrorRequest::InvalidRequest)?;
+            let request_params =
+                from_str::<RequestParams>(json).map_err(ErrorRequest::InvalidRequest)?;
 
             if let Some(filter) = request_params.filter {
-                return self.filter(filter);
+                self = self.filter(filter)?;
+            }
+
+            if let Some(sort_list) = request_params.sort {
+                self = self.sort(sort_list)?;
             }
         }
 
@@ -137,6 +169,8 @@ impl WebRequest for Comments {
     }
 
     fn load(self, connection: &mut PgConnection) -> Self::ResultLoad {
-        self.box_query.load::<Comment>(connection).map_err(ErrorRequest::Database)
+        self.box_query
+            .load::<Comment>(connection)
+            .map_err(ErrorRequest::Database)
     }
 }

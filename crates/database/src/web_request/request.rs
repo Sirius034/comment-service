@@ -4,6 +4,7 @@ use serde_json;
 use std::{collections::HashMap};
 
 pub type Filter = HashMap<String, FilterValue<serde_json::Value>>;
+pub type Sort = Vec<String>;
 
 #[derive(Debug, PartialEq, Eq, Hash, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -37,7 +38,7 @@ where
 
     fn filter(self, filter: Filter) -> Result<Self, Self::Error>;
 
-    fn sort(self) -> Result<Self, Self::Error>;
+    fn sort(self, sort_list: Sort) -> Result<Self, Self::Error>;
 
     fn init_sql_query_from_json(self, json: Option<&str>) -> Result<Self, Self::Error>;
 

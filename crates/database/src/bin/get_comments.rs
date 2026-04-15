@@ -5,8 +5,7 @@ fn main() {
     // let json = "{\n\"filter\": {\n\"id\": {\n\"_eq\": \"cfcf6310-f589-49f8-ae98-1d1b60b5c6c7\"\n}\n}\n}";
     // let json = "{\n\"filter\": {\n\"comment\": {\n\"_eq\": \"Hello\"\n}\n}\n}";
     
-    // let json = "{\n\"sort\": [ \"-pinned\" ]\n}";
-    let json = "{}";
+    let json = "{\n\"sort\": [ \"-pinned\" ]\n}";
     
     let comments = read::get_comments(Some(json));
 

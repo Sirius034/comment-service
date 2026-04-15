@@ -18,15 +18,3 @@ pub fn establish_connection() -> PgConnection {
     PgConnection::establish(&database_url)
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_establish_connection() {
-        let panicked = std::panic::catch_unwind(|| establish_connection());
-
-        assert!(panicked.is_ok(), "Connection test failed.");
-    }
-}

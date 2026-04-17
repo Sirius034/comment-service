@@ -47,6 +47,24 @@ mod test {
             "Unable to match comment user_name"
         );
 
+        let new_comment_content = "New text";
+        let payload_update_comment = format!("{{\n\"comment\": \"{}\"\n}}", new_comment_content);
+        let update_comment = web_request::update_comment(
+            &comment.id.to_string(),
+            &payload_update_comment,
+            &mut connection,
+        )
+        .unwrap();
+        assert_eq!(
+            update_comment.id, comment.id,
+            "The update failed, the resulting identifiers do not match"
+        );
+        assert_eq!(
+            update_comment.comment,
+            Some(new_comment_content.to_string()),
+            "Update failed, message content was not updated"
+        );
+
         let deleted_comment_id =
             web_request::remove_comment(&comment.id.to_string(), &mut connection).unwrap();
         assert_eq!(

@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 dotenvy = "0.15.7"
-axum = "0.8.8"
+axum = "0.8.9"
 database = { path = "../database" }
 tokio = { version = "1.49.0", features = ["full"] }
+serde_json = "1.0.149"

@@ -2,7 +2,7 @@ use crate::establish_connection;
 use crate::models::Comment;
 use crate::web_request::{Comments, ErrorRequest, WebRequest, read_comment};
 
-pub fn get_comments(json: Option<&str>) -> Result<Vec<Comment>, ErrorRequest> {
+pub fn web_get_comments(json: Option<&str>) -> Result<Vec<Comment>, ErrorRequest> {
     let connection = &mut establish_connection();
     let comments_req = Comments::new();
 
@@ -11,7 +11,7 @@ pub fn get_comments(json: Option<&str>) -> Result<Vec<Comment>, ErrorRequest> {
         .load(connection)
 }
 
-pub fn get_comment(comment_id: &str) -> Result<Comment, ErrorRequest> {
+pub fn web_get_comment(comment_id: &str) -> Result<Comment, ErrorRequest> {
     let connection = &mut establish_connection();
 
     read_comment(comment_id, connection)

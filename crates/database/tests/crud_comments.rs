@@ -22,7 +22,7 @@ mod test {
     #[test]
     fn test_crud_lifecycle() {
         let mut connection = test_establish_connection();
-        let json = "{\r\n  \"type_\": 1,\r\n  \"comment\": \"Test text comment\",\r\n  \"page_id\": \"12321343134rr33\",\r\n  \"user_name\": \"User Name\",\r\n  \"user_id\": \"1232123\",\r\n  \"client_id\": \"dsa1232123232dsa\"\r\n}";
+        let json = "{\r\n  \"type_\": 1,\r\n  \"comment\": \"Сomment Text\",\r\n  \"page_id\": \"1\",\r\n  \"user_name\": \"User Name\",\r\n  \"user_id\": \"1\",\r\n  \"client_id\": \"1\"\r\n}";
 
         let comment = web_request::create_comment(json, &mut connection).unwrap();
         assert_eq!(

@@ -44,6 +44,12 @@ impl Comments {
     }
 }
 
+impl Default for Comments {
+  fn default() -> Self {
+      Self::new()
+  }
+}
+
 impl WebRequest for Comments {
     type ResultLoad = Result<Vec<Comment>, ErrorRequest>;
     type Error = ErrorRequest;

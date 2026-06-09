@@ -11,7 +11,8 @@ use uuid::Uuid;
 #[derive(Debug, Deserialize, AsChangeset)]
 #[diesel(table_name = comments)]
 struct PayloadUpdateComment {
-    comment: String,
+    comment: Option<String>,
+    user_name: Option<String>
 }
 
 fn convert_str_to_uuid(value: &str) -> Result<Uuid, ErrorRequest> {

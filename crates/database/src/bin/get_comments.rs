@@ -7,7 +7,7 @@ fn main() {
     
     let json = "{\n\"sort\": [ \"-pinned\" ]\n}";
     
-    let comments = read::get_comments(Some(json));
+    let comments = read::web_get_comments(Some(json));
 
     println!("Schema: {:#?}", comments);
 }

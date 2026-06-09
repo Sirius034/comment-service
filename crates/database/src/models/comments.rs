@@ -1,10 +1,10 @@
 use crate::schema::comments;
 use chrono::NaiveDateTime;
 use diesel::prelude::*;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Queryable, Selectable, Debug)]
+#[derive(Queryable, Selectable, Debug, Serialize)]
 #[diesel(table_name = comments)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Comment {

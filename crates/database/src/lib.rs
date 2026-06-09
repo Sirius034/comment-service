@@ -5,8 +5,9 @@ use std::env;
 
 pub mod models;
 pub mod schema;
-pub mod read;
 pub mod create;
+pub mod read;
+pub mod update;
 pub mod delete;
 pub mod web_request;
 

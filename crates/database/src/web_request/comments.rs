@@ -37,6 +37,7 @@ pub struct Comments {
 }
 
 impl Comments {
+    #[must_use]
     pub fn new() -> Self {
         Comments {
             box_query: comments::table.into_boxed(),
@@ -45,9 +46,9 @@ impl Comments {
 }
 
 impl Default for Comments {
-  fn default() -> Self {
-      Self::new()
-  }
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl WebRequest for Comments {
@@ -55,7 +56,7 @@ impl WebRequest for Comments {
     type Error = ErrorRequest;
 
     fn filter(mut self, filter: Filter) -> Result<Self, Self::Error> {
-        use crate::schema::comments::dsl::*;
+        use crate::schema::comments::dsl::{comment, id, page_id, pinned, user_id, user_name};
         use log::warn;
         use uuid::Uuid;
 
@@ -98,10 +99,10 @@ impl WebRequest for Comments {
     }
 
     fn sort(mut self, sort_list: Sort) -> Result<Self, Self::Error> {
-        use crate::schema::comments::dsl::*;
+        use crate::schema::comments::dsl::data_created;
 
         for sort in sort_list {
-            let is_sord_desc = sort.starts_with("-");
+            let is_sord_desc = sort.starts_with('-');
             let col_name = if is_sord_desc {
                 sort.get(1..)
             } else {
@@ -109,8 +110,9 @@ impl WebRequest for Comments {
             };
 
             self.box_query = match col_name {
-                Some("data_created") => apply_sort!(self.box_query, data_created, is_sord_desc),
-                Some("pinned") => apply_sort!(self.box_query, data_created, is_sord_desc),
+                Some("data_created" | "pinned") => {
+                    apply_sort!(self.box_query, data_created, is_sord_desc)
+                }
                 _ => self.box_query,
             };
         }

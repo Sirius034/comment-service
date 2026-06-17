@@ -12,7 +12,7 @@ use uuid::Uuid;
 #[diesel(table_name = comments)]
 struct PayloadUpdateComment {
     comment: Option<String>,
-    user_name: Option<String>
+    user_name: Option<String>,
 }
 
 fn convert_str_to_uuid(value: &str) -> Result<Uuid, ErrorRequest> {

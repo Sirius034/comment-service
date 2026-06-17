@@ -16,4 +16,3 @@ pub fn web_get_comment(comment_id: &str) -> Result<Comment, ErrorRequest> {
 
     read_comment(comment_id, connection)
 }
-

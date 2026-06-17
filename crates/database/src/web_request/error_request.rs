@@ -16,15 +16,14 @@ impl fmt::Display for ErrorRequest {
             ErrorRequest::InvalidUuid { field, source } => {
                 write!(
                     f,
-                    "Invalid value uuid in the field {}. Source: {}",
-                    field, source
+                    "Invalid value uuid in the field {field}. Source: {source}"
                 )
             }
             ErrorRequest::InvalidRequest(error) => {
-                write!(f, "Invalid request: {}", error)
+                write!(f, "Invalid request: {error}")
             }
             ErrorRequest::Database(error) => {
-                write!(f, "Database error: {}", error)
+                write!(f, "Database error: {error}")
             }
         }
     }

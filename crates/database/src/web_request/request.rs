@@ -1,7 +1,7 @@
 use diesel::pg::PgConnection;
 use serde::Deserialize;
 use serde_json;
-use std::{collections::HashMap};
+use std::collections::HashMap;
 
 pub type Filter = HashMap<String, FilterValue<serde_json::Value>>;
 pub type Sort = Vec<String>;

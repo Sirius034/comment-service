@@ -13,12 +13,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: postgres://username:password@localhost/database
+      DATABASE_URL: postgres://username:password@localhost:5432/database
     services:
       postgres:
         image: postgres
         env:
           POSTGRES_PASSWORD: password
+          POSTGRES_USER: username
+          POSTGRES_DB: database
         ports:
           - 5432:5432
         options: >-
@@ -29,6 +31,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - name: Istall diesel CLI
+        run: cargo install diesel_cli --no-default-features --features postgres
+      - name: Run migration
+        working-directory: crates/database
+        run: diesel migration run
       - run: cargo test --all-features
 
   clippy:
@@ -53,4 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
       - uses: rustsec/audit-check@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

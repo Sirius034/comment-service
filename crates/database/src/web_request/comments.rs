@@ -1,5 +1,5 @@
-use super::ErrorRequest;
 use super::request::{Filter, Operator, Sort, WebRequest};
+use crate::errors::Errors;
 use crate::models::Comment;
 use crate::schema::comments;
 use diesel::pg::{Pg, PgConnection};
@@ -52,8 +52,8 @@ impl Default for Comments {
 }
 
 impl WebRequest for Comments {
-    type ResultLoad = Result<Vec<Comment>, ErrorRequest>;
-    type Error = ErrorRequest;
+    type ResultLoad = Result<Vec<Comment>, Errors>;
+    type Error = Errors;
 
     fn filter(mut self, filter: Filter) -> Result<Self, Self::Error> {
         use crate::schema::comments::dsl::{comment, id, page_id, pinned, user_id, user_name};
@@ -65,12 +65,11 @@ impl WebRequest for Comments {
 
             self.box_query = match (field_name.as_str(), value) {
                 ("id", Value::String(str)) => {
-                    let uuid = Uuid::parse_str(str.as_str()).map_err(|error| {
-                        ErrorRequest::InvalidUuid {
+                    let uuid =
+                        Uuid::parse_str(str.as_str()).map_err(|error| Errors::InvalidUuid {
                             field: str,
                             source: error,
-                        }
-                    })?;
+                        })?;
                     apply_filter!(self.box_query, id, operator, uuid)
                 }
                 ("pinned", Value::Bool(val)) => {
@@ -122,8 +121,7 @@ impl WebRequest for Comments {
 
     fn init_sql_query_from_json(mut self, json: Option<&str>) -> Result<Self, Self::Error> {
         if let Some(json) = json {
-            let request_params =
-                from_str::<RequestParams>(json).map_err(ErrorRequest::InvalidRequest)?;
+            let request_params = from_str::<RequestParams>(json).map_err(Errors::InvalidRequest)?;
 
             if let Some(filter) = request_params.filter {
                 self = self.filter(filter)?;
@@ -140,6 +138,6 @@ impl WebRequest for Comments {
     fn load(self, connection: &mut PgConnection) -> Self::ResultLoad {
         self.box_query
             .load::<Comment>(connection)
-            .map_err(ErrorRequest::Database)
+            .map_err(Errors::Database)
     }
 }

@@ -17,14 +17,23 @@ fn test_establish_connection() -> PgConnection {
 #[cfg(test)]
 mod test {
     use super::*;
+    use database::models::NewComment;
     use uuid::Uuid;
+    use web_request::PayloadUpdateComment;
 
     #[test]
     fn test_crud_lifecycle() {
         let mut connection = test_establish_connection();
-        let json = "{\r\n  \"type_\": 1,\r\n  \"comment\": \"Сomment Text\",\r\n  \"page_id\": \"1\",\r\n  \"user_name\": \"User Name\",\r\n  \"user_id\": \"1\",\r\n  \"client_id\": \"1\"\r\n}";
+        let new_comment = NewComment {
+            type_: 1,
+            comment: Some("Сomment Text".to_string()),
+            page_id: Some("1".to_string()),
+            user_name: Some("User Name".to_string()),
+            user_id: Some("1".to_string()),
+            client_id: Some("1".to_string()),
+        };
 
-        let comment = web_request::create_comment(json, &mut connection).unwrap();
+        let comment = web_request::create_comment(new_comment, &mut connection).unwrap();
         assert_eq!(
             comment.user_name,
             Some("User Name".to_string()),
@@ -48,10 +57,13 @@ mod test {
         );
 
         let new_comment_content = "New text";
-        let payload_update_comment = format!("{{\n\"comment\": \"{}\"\n}}", new_comment_content);
+        let payload_update_comment = PayloadUpdateComment {
+            comment: Some(new_comment_content.to_string()),
+            user_name: None,
+        };
         let update_comment = web_request::update_comment(
             &comment.id.to_string(),
-            &payload_update_comment,
+            payload_update_comment,
             &mut connection,
         )
         .unwrap();

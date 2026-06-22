@@ -1,9 +1,12 @@
-use crate::establish_connection;
+use crate::errors::Errors;
 use crate::models::Comment;
-use crate::web_request::{Comments, ErrorRequest, WebRequest, read_comment};
+use crate::web_request::{Comments, WebRequest, read_comment};
+use diesel::pg::PgConnection;
 
-pub fn web_get_comments(json: Option<&str>) -> Result<Vec<Comment>, ErrorRequest> {
-    let connection = &mut establish_connection();
+pub fn web_get_comments(
+    json: Option<&str>,
+    connection: &mut PgConnection,
+) -> Result<Vec<Comment>, Errors> {
     let comments_req = Comments::new();
 
     comments_req
@@ -11,8 +14,6 @@ pub fn web_get_comments(json: Option<&str>) -> Result<Vec<Comment>, ErrorRequest
         .load(connection)
 }
 
-pub fn web_get_comment(comment_id: &str) -> Result<Comment, ErrorRequest> {
-    let connection = &mut establish_connection();
-
+pub fn web_get_comment(comment_id: &str, connection: &mut PgConnection) -> Result<Comment, Errors> {
     read_comment(comment_id, connection)
 }

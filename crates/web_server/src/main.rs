@@ -1,13 +1,11 @@
-mod comments;
-mod error;
-
-use axum::Router;
+mod app;
+mod errors;
+mod handlers;
+mod routes;
 
 #[tokio::main]
 async fn main() {
-    let comments_routes = comments::routes();
-
-    let app = Router::new().nest("/api", comments_routes);
+    let web_app = app::create_app();
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     let addr = listener.local_addr().unwrap();
@@ -18,5 +16,5 @@ async fn main() {
         addr.port()
     );
 
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(listener, web_app).await.unwrap();
 }
